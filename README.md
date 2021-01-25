@@ -1,6 +1,9 @@
 # A-Helpful-Discord-Bot 😀
 
-This is a functional discord bot, made with the help of Python and a bit of JavaScript. 
+This is a functional discord bot, made with the help of Python.
+
+Libraries used :-
+ - discord.py
 
 Some features right now :-
 
