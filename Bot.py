@@ -1,15 +1,23 @@
 import discord
 from discord.ext import commands
-import json
-import os
-from subprocess import call
+import random
+from discord.ext.commands import Bot
+from discord import Game
 
-bot = commands.Bot(command_prefix = '$') # user need to put a '$' before writing a command
+bot = commands.Bot(command_prefix = '$') # user need to put a '$' before writing a command   
 
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game('With our work'))
     print("Bot Loading")
+
+# Command for random coin flip game
+@bot.command(aliases = ['flip','test'])
+async def _flip(ctx):
+    outcome = ['Heads',
+                'Tails',
+                'Oops! Coin is lost!']
+    await ctx.send(f'Here you go: {random.choice(outcome)}')
 
 # Clearing 10 chats
 @bot.command()
@@ -20,29 +28,28 @@ async def clear(ctx, amount = 10):
     await ctx.send(f'Deleted 10 messages, Channel looking clean.')
 
 # For kicking/ban someone out of server
-@bot.command
+@bot.command()
 async def kick(ctx, member : discord.Member,*,reason = None):
     await member.kick(reason = reason)
     await ctx.send(f'A {member.mention} has been kicked')
     
-@bot.command
-async def ban(ctx, member : discord.Member,*,reason = None):
+@bot.command()
+async def ban(ctx, member : discord.Member, *,reason = None):
     await member.ban(reason = reason)
     await ctx.send(f'A {member.mention} has been banned')
 
 # Unban the member
-async def unban(ctx, *, member): 
-    banned = await ctx.guild.bans()
-    member_name, member_discriminator = member.split('#')
+@bot.command()
+async def unban(ctx, *, member):
+    banned_users = await ctx.guild.bans()
+    member_name, member_discriminator = member.split("#")
 
-    for b_entry in banned:
-        user = b_entry.user
-        
-        # Creating a Tuple 
-        if(user.discriminator, user.name) == (member_discriminator, member_name):
+    for ban_entry in banned_users:
+        user = ban_entry.user
+
+        if (user.name, user.discriminator) == (member_name, member_discriminator):
             await ctx.guild.unban(user)
-            await ctx.send(f'A user {user.name} has been unbanned now!')
-            await ctx.send(f'A lesson well learnt.')
+            await ctx.send(f'Unbanned {user.mention}')
             return
 
 @bot.command()
@@ -62,5 +69,5 @@ async def leave(ctx):
         client = ctx.message.guild.voice_client
         await client.disconnect()
 
-bot.run('write your token ID here from bot settings in discord')
 
+bot.run('Write your token here from developer options!')
